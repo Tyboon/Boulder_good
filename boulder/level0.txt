@@ -1,4 +1,5 @@
 [5 5]
+1
 XXXXX
 XHRDX
 X...X

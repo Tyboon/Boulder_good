@@ -13,9 +13,9 @@ breed [dirt]
 breed [blast]
 breed [lifes life]
 breed [amibes amibe]
+breed [transports transport]
 
 globals       [ nb_dynamites score nb-to-collect countdown nb_keys current_amibes tot_amibes ]
-breed [transports transport]
 heros-own     [ moving? orders teleporting?]
 diamonds-own  [ moving? ]
 monsters-own  [ moving? right-handed? ]
@@ -64,13 +64,23 @@ to go
         [ user-message "CONGRATULATIONS !" stop ] ;si dernier niveau, congratulations
         [ ifelse (level = "level0") ;sinon on passe au niveau supérieur
           [set level "level1"]
-          [ifelse (level = "level2")
-            [set level "level3" ]
-            [set level "level4" ]
+          [ifelse (level = "level1")
+            [set level "level2" ]
+            [ifelse (level = "level2")
+              [set level "level3"]
+              [ifelse (level = "level3")
+                [set level "level4"]
+                [ifelse (level = "level4")
+                  [set level "level5"]
+                  [set level "level6"]
+                  ]
             ]
-          init-world
+
         ]
       ]
+      ]
+    ]
+     init-world
       ]
     ]
 end
@@ -79,6 +89,7 @@ to read-level [ filename ]
   file-open filename
   let s read-from-string file-read-line ; list with width and height
   resize-world 0 (first s - 1)  (1 - last s) 0
+  set nb-to-collect read-from-string file-read-line ; list with width and height
   let x 0 let y 0
   while [(y >= min-pycor) and (not file-at-end?)]
     [ set x 0
@@ -160,7 +171,6 @@ to init-world
   ifelse(tutorial)
     [read-level(word tutorials ".txt")]
     [read-level (word level ".txt")]
-  set nb-to-collect count diamonds
   set current_amibes 0
   set tot_amibes 0
 end
@@ -592,8 +602,8 @@ end
 
 to heros::teleporte
   let target ioda:target
-  if(any? (transports with [(color = ([ color ] of target)) and (xcor != [xcor] of target and ycor != [ycor] of target)]))
-   [let t (one-of (transports with [(color = ([ color ] of target)) and (xcor != [xcor] of target and ycor != [ycor] of target)]))
+  if(any? (transports with [(color = ([ color ] of target)) and (xcor != [xcor] of target or ycor != [ycor] of target)]))
+   [let t (one-of (transports with [(color = ([ color ] of target)) and (xcor != [xcor] of target or ycor != [ycor] of target)]))
   move-to (patch ([xcor] of t) ([ycor] of t))
   set teleporting? true
    ]
@@ -1006,7 +1016,7 @@ CHOOSER
 level
 level
 "level0" "level1" "level2" "level3" "level4" "level5"
-5
+4
 
 MONITOR
 265
@@ -1119,28 +1129,111 @@ NIL
 1
 
 @#$#@#$#@
-## WHAT IS IT?
+## Boulder dash
 
-This file is a basic implementation of the "Boulder Dash" video game (1984) within the IODA NetLogo extension.
+Ce fichier contient le jeu boulder dash avec ses fonctionnalités.
 
-## HOW IT WORKS
+## Règles du jeu
 
-A cave is initialized in the setup procedure. The main character has to dig the dirt to collect all diamonds initially present without being killed by monsters or falling rocks or diamonds. Agents can move only in their von Neumann neighborhood (4 neighbors). When all diamonds have been collected, the hero must reach the exit that appears in the cave.
+Le but du jeu est de creuser et d'éviter les obstacles (les monstres et les chutes de pierres) pour accéder aux diamants. Lorsque suffisamment de diamants sont collectés, une porte s'ouvre. Il faut alors se diriger vers celle-ci pour gagner le niveau.
 
-
-## HOW TO USE IT
-
-You just have to click on **`setup`**, then on **`go`**. Your aim is to endow the character and the other agents with a better behavior than the initial one.
+Le personnage a un certain nombre de vies (indiquées dans "countdown"). Lorsque le personnage meurt, il recommence le niveau en cours et perd une vie. S'il n'a plus de vie, vous avez perdu et vous recommencer au level 0.
 
 
-## HOW TO CITE
+## Comment jouer ?
 
-  * The **IODA methodology and simulation algorithms** (i.e. what is actually in use in this NetLogo extension):
-Y. KUBERA, P. MATHIEU and S. PICAULT (2011), "IODA: an interaction-oriented approach for multi-agent based simulations", in: _Journal of Autonomous Agents and Multi-Agent Systems (JAAMAS)_, vol. 23 (3), p. 303-343, Springer DOI: 10.1007/s10458-010-9164-z.
-  * The **key ideas** of the IODA methodology:
-P. MATHIEU and S. PICAULT (2005), "Towards an interaction-based design of behaviors", in: M.-P. Gleizes (ed.), _Proceedings of the The Third European Workshop on Multi-Agent Systems (EUMAS'2005)_.
-  * Do not forget to cite also **NetLogo** itself when you refer to the IODA NetLogo extension:
-U. WILENSKY (1999), NetLogo. http://ccl.northwestern.edu/netlogo Center for Connected Learning and Computer-Based Modeling, Northwestern University. Evanston, IL.
+Pour jouer, vous pouvez choisir de faire le tutoriel ou non avec le slider tutorial.
+Si vous choisissez de vous entrainer sur le tutoriel, un certain nombre de tutoriels vous sont proposés dans une liste déroulante. Ces différents tutoriels traitent les différentes optionnalités du jeu.
+
+Si vous choisissez de ne pas faire le tutoriel, vous pouvez accéder directement aux différents niveaux avec la liste déroulante.
+
+Il est également possible de choisir l'option step by step ou non pour savoir comment le personnage va avancer.
+
+Lorsque le niveau (ou le tutoriel) est choisi, il vous suffit de cliquer sur setup puis sur go.
+
+Vous pouvez ensuite jouer avec les touches indiquées (0, 2, 4, 5, 6, 8, 9).
+
+## Optionnalités du jeu
+
+Fonctionnalités pour le joueur :
+Lors d'une partie, le personnage va pouvoir se déplacer pour aller collecter les diamants.
+Si sur son passage le personnage croise une dynamite, il peut également la collecter.
+Il peut aussi collecter un coeur, qui va lui permettre de gagner une vie.
+Un compteur indique le nombre de dynamites à disposition du joueur.
+Le joueur peut déposer une dynamite, la dynamite détruit tout ce qu'il y a autour (sauf les murs indestructibles : voir fonctionnalités des murs).
+
+Le joueur peut également pousser une pierre à gauche ou à droite si il n'y a rien à côté.
+Si le joueur croise un monstre, il meurt et crée une explosion, qui crée 9 diamants.
+Lorsque le joueur meurt, si il n'a plus de vie il perd le jeu, sinon, il recommence le niveau avec 1 vie en moins.
+
+
+
+Fonctionnalités pour les pierres :
+Une pierre est soumise à la pesanteur et tombe s'il n'y a plus rien en dessous sauf un mur magique (voir les fonctionnalités des murs).
+Si sous une pierre se trouve une autre pierre ou un diamant et qu'il n'y a rien en dessous à sa droite ou à sa gauche, elle roule et tombe.
+Si la pierre tombe sur un monstre ou sur le héro, cela tue le monstre ou le héro et crée une explosion.
+
+
+
+Fonctionnalités pour les explosions :
+Une explosions peut permettre :
+	soit de créer des diamants autour de cette dernière, l'explosion se propage avec une force décroissante et répand ainsi les diamants.
+	soit de tout détruire autour d'elle (à part les murs indestructibles), toujours en se propageant avec une force décroissante.
+
+
+
+Fonctionnalités pour les diamants :
+Il existe deux sortes de diamants : les bleus et les rouges.
+Les diamants bleus augmentent le score du joueur de 1 point tandis que les rouges augmentent le score de 10 points.
+Les diamants roulent si elles sont sur des pierres ou sur d'autres diamants et qu'il n'y a rien en desous à droite ou à gauche mais ne créent pas d'explosions si elles tombent sur un monstre.
+
+
+
+Fonctionnalités pour les murs :
+Les murs sont de trois types : ils peuvent être des murs destructibles, indestructibles ou magiques.
+Les murs indestructibles ne sont pas détruits lors d'explosions ni avec une dynamite. Les murs destructibles sont détruits par les explosions et par les dynamites.
+Les murs magiques sont perméables aux pierres et créent des diamants à partir de ces pierres.
+
+
+
+Fonctionnalités pour les transporteurs :
+Les transporteurs sont de différentes couleurs.
+Lorsque le héro se place sur un transporteur d'une couleur, il est téléporté sur un autre transporteur du plateau de la même couleur.
+
+
+
+
+Fonctionnalités pour les amibes :
+Lorsque le joueur monte en niveau, apparaissent des amibes. Les amibes croissent lorsqu'autour il n'y a rien ou il y a de la poussière.
+Aléatoirement, les amibes se transforment en pierres.
+Lorsque les amibes ne peuvent plus se répandre car il n'y a plus de place, elles se transforment en diamants.
+
+## Partie développeur
+Création d'un niveau :
+Les niveaux se créent dans un fichier .txt.
+La première information à y mettre est la taille du plateau (coordonnées en x, coordonnées en y.
+La deuxième ligne indique le nombre de diamants à collecter.
+Différentes espèces peuvent ensuite être positionnées :
+	"X" représente un mur indestructible
+	"x" représente un mur destructible
+	"H" représente le héro
+	"." représente de la poussière
+	" " représente un espace vide
+	"D" représente un diamant
+	"y" représente une dynamite
+	"o" représente la porte de sortie
+	"R" représente un rocher
+	"M" représente un monstre
+	"L" représente une vie
+	"Y" représente un téléporteur jaune
+	"r" représente un téléporteur rouge
+	"G" représente un téléporteur vert
+	"W" représente un téléporteur blanc
+	"C" représente un diamant rouge
+	"A" représente un amibe
+
+Il vous faudra également ajouter ces niveaux dans l'interface graphique et dans la fonction go du code.
+
 
 ## COPYRIGHT NOTICE
 

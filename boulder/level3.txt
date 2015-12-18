@@ -1,4 +1,5 @@
 [40 12]
+8
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 X H ..........RRRRRR....X..............X
 XXXXXXXXXXx.............X..............X

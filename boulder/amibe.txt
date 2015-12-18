@@ -1,4 +1,5 @@
 [10 7]
+0
 XXXXXXXXXX
 XH  .. ..X
 X...A. ..X

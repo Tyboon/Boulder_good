@@ -1,4 +1,5 @@
 [40 12]
+4
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 X H  .....X.............X..    ........X
 X..rY.....X.............X..r...Y.......X
