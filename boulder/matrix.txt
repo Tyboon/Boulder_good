@@ -87,6 +87,5 @@ dynamites	StopFalling 	 10 	doors		 1
 dynamites	StopFalling 	 10 	dynamites	 1 
 
 amibes		Expense		 50
-
- 
-
+amibes    	InitTransfo   	 50
+amibes    	TransformRock    0   	UPDATE

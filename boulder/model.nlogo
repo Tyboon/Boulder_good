@@ -14,7 +14,7 @@ breed [blast]
 breed [lifes life]
 breed [amibes amibe]
 
-globals       [ nb_dynamites score nb-to-collect countdown nb_keys nb_amibes tot_amibes]
+globals       [ nb_dynamites score nb-to-collect countdown nb_keys current_amibes tot_amibes ]
 breed [transports transport]
 heros-own     [ moving? orders teleporting?]
 diamonds-own  [ moving? ]
@@ -25,7 +25,7 @@ doors-own     [ open? ]
 blast-own     [ strength diamond-maker? ]
 dynamites-own [ counter moving?]
 patches-own   [ dijkstra-dist ]
-amibes-own    [ mutate?]
+amibes-own    [ transform ]
 
 to setup [countd]
   set countdown countd
@@ -52,7 +52,7 @@ to setup_level
 end
 
 to go
-  set nb_amibes 0
+  set current_amibes 0
   ioda:go
   tick
   ifelse (not any? heros)
@@ -161,7 +161,7 @@ to init-world
     [read-level(word tutorials ".txt")]
     [read-level (word level ".txt")]
   set nb-to-collect count diamonds
-  set nb_amibes 0
+  set current_amibes 0
   set tot_amibes 0
 end
 
@@ -241,7 +241,7 @@ end
 
 
 to init-amibe
-  set mutate? false
+  set transform false
   ioda:init-agent
 end
 
@@ -633,7 +633,9 @@ to blast::kill
         ask turtles-here [
           let rdm (random 3 <= newStrength)
           if (rdm and (breed != walls and breed != doors) or (breed = walls and destructible?))
-          [ioda:die]
+          [ if (breed = amibes ) [ set tot_amibes (tot_amibes - 1)]
+            ioda:die
+          ]
         ]
       ]
       sprout-blast 1 [init-blast newStrength dm]
@@ -755,46 +757,69 @@ end
 
 ; amibe-related primitives
 to amibes::expense
-  let add_amibes 0
-  ask neighbors [
-    let t turtles-here
-    print t
-    ifelse not any? t
-      [ sprout-amibes 1 [init-amibe] ]
-      [if [breed] of one-of t = dirt
-        [
-        ask dirt-here
+  if (ticks mod 30 = 0)
+  [ let add_amibes 0
+    ask neighbors [
+      let t turtles-here
+      ifelse not any? t
+        [ sprout-amibes 1 [init-amibe] ]
+        [if [breed] of one-of t = dirt
           [
-          ioda:die
+          ask dirt-here
+            [
+            ioda:die
+            ]
+          sprout-amibes 1 [init-amibe]
+          set add_amibes (add_amibes + 1)
           ]
-        sprout-amibes 1 [init-amibe]
         ]
-      ]
+    ]
+    set tot_amibes (tot_amibes + add_amibes)
+    if current_amibes = tot_amibes
+    [  ask amibes [
+        ioda:die
+        if not any? rocks-here
+        [  ask patch-here [ sprout-diamonds 1 [init-diamond cyan]]] ;transforme en diamant si pas de mouvement
+       ]
+    ]
+    set current_amibes (current_amibes + 1)
   ]
-  set nb_amibes (nb_amibes + 1)
 end
 
 to amibes::die
-  set tot_amibes (tot_amibes - 1)
   ioda:die
 end
 
-to-report amibes::mutationRock?
-  report mutate?
+to amibes::initTransform ; tous les 50 ticks initialise la transformation aléatoirement des amibes et ses amibes voisins en pierre
+  if (ticks mod 100 = 0) [
+    set transform true
+    if (random 4 = 0)
+      [ ask neighbors
+        [ if ((count amibes-here) > 0)
+          [ ask amibes-here [ set transform true] ]
+        ]
+      ]
+   ]
 end
 
-to amibes::transformInRocks
-  die
-  ask patch-here [
-    sprout-rocks 1 [init-rock]
-  ]
+to amibes::transformRock
+  set tot_amibes (tot_amibes - 1)
+  ioda:die
+  ask patch-here [ sprout-rocks 1 [init-rock] ]
 end
+
+to-report amibes::transform?
+  report transform
+end
+
+;
+;
 @#$#@#$#@
 GRAPHICS-WINDOW
 637
 10
-882
-181
+1447
+281
 -1
 -1
 20.0
@@ -808,8 +833,8 @@ GRAPHICS-WINDOW
 0
 1
 0
-9
--6
+39
+-11
 0
 0
 0
@@ -980,8 +1005,8 @@ CHOOSER
 108
 level
 level
-"level0" "level1" "level2" "level3" "level4"
-3
+"level0" "level1" "level2" "level3" "level4" "level5"
+5
 
 MONITOR
 265
@@ -1050,7 +1075,7 @@ SWITCH
 155
 tutorial
 tutorial
-0
+1
 1
 -1000
 

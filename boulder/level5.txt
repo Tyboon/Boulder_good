@@ -1,0 +1,13 @@
+[40 12]
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X H  .....X.............X..    ........X
+X..rY.....X.............X..r...Y.......X
+X.........L.............XXXXXXXXXXX....X
+X......... ....DDDD.....x M        x...X
+X....y.... ....mmmm.....x          x...X
+X...XXXX..X....M   .....x          x...X
+X..   AX..X...X    X....XXXCXXXXCXX....X
+X.........X...X    X....X..............X
+X....y....X...X Ly X....X..............O
+XXXXXXXXXXX..xxxxxxxx...X..............X
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

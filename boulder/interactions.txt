@@ -82,7 +82,8 @@ parallel interaction Push
 end
 
 parallel interaction Kill
-	actions kill die
+	condition alive?	
+	actions kill
 end
 
 parallel interaction RollRight
@@ -124,3 +125,11 @@ parallel interaction Expense
 	actions expense
 end
 
+parallel interaction TransformRock
+	condition transform?
+	actions transformRock
+end	
+
+parallel interaction InitTransfo
+	actions initTransform
+end
