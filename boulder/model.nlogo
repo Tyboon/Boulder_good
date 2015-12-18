@@ -154,8 +154,8 @@ to init-world
   set-default-shape dirt "dirt"
   set-default-shape blast "star"
   set-default-shape amibes "tile log"
-  set-default-shape dynamites "logs"
-  set-default-shape lifes "food"
+  set-default-shape dynamites "dynamite"
+  set-default-shape lifes "heart"
   set-default-shape transports "target"
   ifelse(tutorial)
     [read-level(word tutorials ".txt")]
@@ -204,7 +204,7 @@ to init-diamond [c]
   set moving? false
   set color c
   if(c = red)
-   [set shape "diamond"]
+   [set shape "diamond_red"]
 
 end
 
@@ -971,7 +971,7 @@ CHOOSER
 level
 level
 "level0" "level1" "level2" "level3" "level4"
-3
+4
 
 MONITOR
 265
@@ -1290,6 +1290,29 @@ Line -11221820 false 255 90 255 150
 Line -11221820 false 45 150 150 300
 Line -11221820 false 255 150 150 300
 
+diamond_red
+false
+0
+Polygon -2674135 false false 60 30 240 30 285 90 285 150 150 300 15 150 15 90
+Polygon -2674135 true false 15 90 60 30 240 30 285 90 285 150 150 300 15 150
+Line -955883 false 15 150 285 150
+Line -955883 false 15 90 285 90
+Line -955883 false 120 30 90 90
+Line -955883 false 180 30 210 90
+Line -955883 false 150 30 150 90
+Line -955883 false 90 90 90 150
+Line -955883 false 150 90 150 150
+Line -955883 false 210 90 210 150
+Line -955883 false 90 150 150 300
+Line -955883 false 150 150 150 300
+Line -955883 false 210 150 150 300
+Line -955883 false 90 30 45 90
+Line -955883 false 210 30 255 90
+Line -955883 false 45 90 45 150
+Line -955883 false 255 90 255 150
+Line -955883 false 45 150 150 300
+Line -955883 false 255 150 150 300
+
 dirt
 false
 0
@@ -1323,6 +1346,53 @@ dot
 false
 0
 Circle -7500403 true true 90 90 120
+
+dynamite
+false
+0
+Circle -955883 false false 132 222 66
+Circle -6459832 false false 72 222 66
+Circle -955883 false false 102 162 66
+Circle -955883 false false 42 162 66
+Polygon -2674135 true false 15 241 75 271 89 245 135 271 150 246 195 271 285 121 235 96 255 61 195 31 181 55 135 31 45 181 49 183
+Circle -955883 true false 102 162 66
+Circle -2674135 true false 222 72 66
+Circle -2674135 true false 192 12 66
+Circle -2674135 true false 132 12 66
+Circle -955883 true false 12 222 66
+Circle -955883 true false 42 162 66
+Line -6459832 false 195 30 105 180
+Line -6459832 false 255 60 165 210
+Line -6459832 false 195 270 285 120
+Line -16777216 false 15 240 45 180
+Line -6459832 false 45 180 135 30
+Circle -955883 true false 132 222 66
+Circle -955883 true false 72 222 66
+Line -1 false 75 195 60 210
+Line -1 false 135 195 120 210
+Line -1 false 165 255 150 270
+Line -1 false 105 255 90 270
+Line -1 false 45 255 30 270
+Line -1184463 false 30 210 45 210
+Line -1184463 false 75 210 90 210
+Line -1184463 false 90 210 105 210
+Line -1184463 false 135 210 150 210
+Line -1184463 false 165 270 180 270
+Line -1184463 false 120 270 135 270
+Line -1184463 false 105 270 120 270
+Line -1184463 false 60 270 75 270
+Line -1184463 false 45 270 60 270
+Line -1184463 false 0 270 15 270
+Line -1184463 false 60 195 60 180
+Line -1184463 false 60 240 60 225
+Line -1184463 false 120 240 120 225
+Line -1184463 false 120 195 120 180
+Line -1184463 false 150 255 150 240
+Line -1184463 false 150 300 150 285
+Line -1184463 false 90 300 90 285
+Line -1184463 false 90 255 90 240
+Line -1184463 false 30 255 30 240
+Line -1184463 false 30 300 30 285
 
 eyes
 false
@@ -1410,6 +1480,14 @@ Circle -1 true false 81 78 56
 Circle -16777216 true false 99 98 19
 Circle -1 true false 155 80 56
 Circle -16777216 true false 171 98 17
+
+heart
+false
+0
+Circle -2674135 true false 138 63 85
+Circle -2674135 true false 78 63 85
+Polygon -2674135 true false 150 225 75 105 225 105 150 225 150 135
+Polygon -2674135 true false 195 105 165 105
 
 house
 false
