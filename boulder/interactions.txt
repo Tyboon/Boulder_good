@@ -1,0 +1,120 @@
+; This file can be used to define your own interactions.
+; SYNTAX:
+; [EXCLUSIVE|PARALLEL] INTERACTION <name>
+; [TRIGGER <tr1> ... <tr_n>]
+; [CONDITION <cond1> ... <cond_n>]
+; [ACTIONS <act1> ... <act_n>]
+; END
+;
+; NB1: tr_i and cond_i are abstract condition primitives,
+; which must be implemented by concrete reporters, while
+; act_i are abstract action primitives, which must be
+; implemented by concrete commands.
+;
+; NB2: any non-letter, non-digit character at the beginning
+; of the line introduces a comment line. Empty lines are ignored.
+;
+
+parallel interaction Open
+  trigger	     objectives-fulfilled?
+  condition	     closed?
+  actions	     change-state
+end
+	 
+parallel interaction StartFalling
+  trigger	     nothing-below?
+  condition	     not:moving?
+  actions	     start-moving
+end
+
+parallel interaction Fall
+  condition	     moving?
+  actions	     move-down
+end
+
+parallel interaction StopFalling
+  condition	    not-target-magic? moving? 
+  actions	     stop-moving
+end
+
+parallel interaction Advance
+  condition 	     nothing-ahead? moving?
+  actions	     move-forward
+end
+
+parallel interaction Turn
+  trigger	     moving?
+  actions	     turn-right-or-left
+end
+
+parallel interaction Dig
+  trigger	     target-ahead?
+  condition	     moving? 
+  actions	     target:die move-forward
+end
+
+parallel interaction StopMoving
+  trigger	     needs-to-stop?
+  condition	     moving?
+  actions	     stop-moving
+end
+
+parallel interaction ReadOrders
+  trigger	     message-received?
+  actions	     handle-messages
+end
+
+parallel interaction Explode
+  condition	     moving?
+  actions 	     create-blast target:die die
+end
+
+parallel interaction Collect
+  trigger	     target-ahead?
+  condition 	     moving? no-wall?
+  actions	     target:die increase-score move-forward
+end
+
+parallel interaction Push
+	trigger target-ahead?
+	condition moving?
+	actions target:push
+end
+
+parallel interaction Kill
+	actions kill die
+end
+
+parallel interaction RollRight
+	condition nothing-right? on-diamond-or-rock?
+	actions rollRight
+end
+
+parallel interaction RollLeft
+	condition nothing-left? on-diamond-or-rock?
+	actions rollLeft
+end
+
+parallel interaction Create-diamonds
+	condition dm?
+	actions create-diamonds die
+end
+
+parallel interaction Change-into-diamond
+	condition on-magic?
+	actions change-into-diamond die
+end
+
+parallel interaction Explode_Dynamite
+	condition counter-ok?
+	actions explode die
+end 
+
+parallel interaction Propagate_dist
+	actions propagate-dist
+end
+
+parallel interaction Teleporte
+	condition moving? not-teleporting?
+	actions teleporte
+end

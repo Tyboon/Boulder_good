@@ -1,0 +1,7 @@
+[9 6]
+XXXXXXXXX
+XH  ....X
+X...L...X
+X.......O
+X.......X
+XXXXXXXXX
