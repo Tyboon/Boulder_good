@@ -143,7 +143,7 @@ to create-agent [ char ]
                                       ]
                                     ]
                                     ]
-                                    ]
+                                  ]
                                   ]
                             ]
                         ]
@@ -624,14 +624,6 @@ end
 
 ; blast-related primitives
 
-;to blast::kill
-;  ask turtles-on neighbors [
-;    if ((breed != walls and breed != doors) or (breed = walls and destructible?))
-;    [ioda:die]
-;    ]
-;end
-
-;if ((breed != walls and breed != doors) or (breed = walls and destructible?)) [ioda:die]
 to blast::kill
   set strength strength - 1
   ;let dm diamond-maker?
@@ -1016,7 +1008,7 @@ CHOOSER
 level
 level
 "level0" "level1" "level2" "level3" "level4" "level5"
-4
+5
 
 MONITOR
 265
@@ -1075,7 +1067,7 @@ CHOOSER
 107
 tutorials
 tutorials
-"dynamites" "magic_walls" "lifes" "teleportation" "amide"
+"dynamites" "magic_walls" "lifes" "teleportation" "amibe"
 4
 
 SWITCH
