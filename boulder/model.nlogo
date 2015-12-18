@@ -153,7 +153,7 @@ to init-world
   set-default-shape diamonds "diamond"
   set-default-shape dirt "dirt"
   set-default-shape blast "star"
-  set-default-shape amibes "tile log"
+  set-default-shape amibes "amibe"
   set-default-shape dynamites "dynamite"
   set-default-shape lifes "heart"
   set-default-shape transports "target"
@@ -242,7 +242,6 @@ end
 
 to init-amibe
   set mutate? false
-  set color green
   ioda:init-agent
 end
 
@@ -382,7 +381,15 @@ to rocks::filter-neighbors
 end
 
 to-report rocks::nothing-below?
-  report default::nothing-below?
+  let t turtles-on patch-at 0 -1
+  if (any? t)
+   [
+    let w one-of t
+    ifelse([breed] of w = walls)
+     [report ([magic?] of w)]
+     [report default::nothing-below?]
+   ]
+  report ( default::nothing-below?)
 end
 
 to-report rocks::moving?
@@ -439,7 +446,7 @@ to rocks::push
   face h
   right 180
   let n turtles-on patch-ahead 1
-  if ( (not any? turtles-on patch-ahead 1 and not (heading = 0)) or (( [breed] of n = walls ) and ( [magic?] of n) ))
+  if ( (not any? turtles-on patch-ahead 1 and not (heading = 0)) or (( [breed] of one-of turtles-on patch-ahead 1 = walls ) and ( [magic?] of one-of n) ))
   [ move-to patch-ahead 1]
 end
 
@@ -747,19 +754,22 @@ to lifes::die
 end
 
 ; amibe-related primitives
-to amoebes::expense
+to amibes::expense
   let add_amibes 0
   ask neighbors [
-    let t ([breed] of turtles-here)
-    if ((not any? turtles-here) or (t = dirt) ) [
-      if not empty? t and t = dirt [
-        ask dirt-here [
+    let t turtles-here
+    print t
+    ifelse not any? t
+      [ sprout-amibes 1 [init-amibe] ]
+      [if [breed] of one-of t = dirt
+        [
+        ask dirt-here
+          [
           ioda:die
+          ]
+        sprout-amibes 1 [init-amibe]
         ]
       ]
-      sprout-amibes 1 [init-amibe]
-      set add_amibes (add_amibes + 1)
-    ]
   ]
   set nb_amibes (nb_amibes + 1)
 end
@@ -769,11 +779,11 @@ to amibes::die
   ioda:die
 end
 
-to-report mutationRock?
+to-report amibes::mutationRock?
   report mutate?
 end
 
-to transformInRocks
+to amibes::transformInRocks
   die
   ask patch-here [
     sprout-rocks 1 [init-rock]
@@ -783,8 +793,8 @@ end
 GRAPHICS-WINDOW
 637
 10
-1447
-281
+882
+181
 -1
 -1
 20.0
@@ -798,8 +808,8 @@ GRAPHICS-WINDOW
 0
 1
 0
-39
--11
+9
+-6
 0
 0
 0
@@ -971,7 +981,7 @@ CHOOSER
 level
 level
 "level0" "level1" "level2" "level3" "level4"
-4
+3
 
 MONITOR
 265
@@ -1030,8 +1040,8 @@ CHOOSER
 107
 tutorials
 tutorials
-"dynamites" "magic-walls" "lifes" "teleportation"
-3
+"dynamites" "magic_walls" "lifes" "teleportation" "amide"
+4
 
 SWITCH
 429
@@ -1040,7 +1050,7 @@ SWITCH
 155
 tutorial
 tutorial
-1
+0
 1
 -1000
 
@@ -1132,6 +1142,47 @@ airplane
 true
 0
 Polygon -7500403 true true 150 0 135 15 120 60 120 105 15 165 15 195 120 180 135 240 105 270 120 285 150 270 180 285 210 270 165 240 180 180 285 195 285 165 180 105 180 60 165 15
+
+amibe
+false
+0
+Rectangle -14835848 true false 0 0 300 300
+Line -13345367 false 0 30 45 15
+Line -13345367 false 45 15 120 30
+Line -13345367 false 120 30 180 45
+Line -13345367 false 180 45 225 45
+Line -13345367 false 225 45 165 60
+Line -13345367 false 165 60 120 75
+Line -13345367 false 120 75 30 60
+Line -13345367 false 30 60 0 60
+Line -13345367 false 300 30 270 45
+Line -13345367 false 270 45 255 60
+Line -13345367 false 255 60 300 60
+Polygon -13345367 false false 15 120 90 90 136 95 210 75 270 90 300 120 270 150 195 165 150 150 60 150 30 135
+Polygon -13345367 false false 63 134 166 135 230 142 270 120 210 105 116 120 88 122
+Polygon -13345367 false false 22 45 84 53 144 49 50 31
+Line -13345367 false 0 180 15 180
+Line -13345367 false 15 180 105 195
+Line -13345367 false 105 195 180 195
+Line -13345367 false 225 210 165 225
+Line -13345367 false 165 225 60 225
+Line -13345367 false 60 225 0 210
+Line -13345367 false 300 180 264 191
+Line -13345367 false 255 225 300 210
+Line -13345367 false 16 196 116 211
+Line -13345367 false 180 300 105 285
+Line -13345367 false 135 255 240 240
+Line -13345367 false 240 240 300 255
+Line -13345367 false 135 255 105 285
+Line -13345367 false 180 0 240 15
+Line -13345367 false 240 15 300 0
+Line -13345367 false 0 300 45 285
+Line -13345367 false 45 285 45 270
+Line -13345367 false 45 270 0 255
+Polygon -13345367 false false 150 270 225 300 300 285 228 264
+Line -13345367 false 223 209 255 225
+Line -13345367 false 179 196 227 183
+Line -13345367 false 228 183 266 192
 
 arrow
 true

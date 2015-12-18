@@ -118,3 +118,9 @@ parallel interaction Teleporte
 	condition moving? not-teleporting?
 	actions teleporte
 end
+
+
+parallel interaction Expense
+	actions expense
+end
+
